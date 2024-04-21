@@ -32,7 +32,7 @@ From the inspector you can set is the console should be visible by default when 
 * Use `~` key to open/close the console (It is actually ` key)
 * Type `help` and press Enter, to see available commands
 * For printing something in the console use Console.print() instead of print()
-```bash
+```gdscript
   Console.print('Hello world')
   Console.print('This is my variable', my_variable)
   Console.print('I', 'can', 'pass', 'up', 'to', 12, 'params')
