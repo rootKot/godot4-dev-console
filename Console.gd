@@ -13,7 +13,7 @@ var _commands: Dictionary = {
 		'exec': _help
 	},
 	'clear': {
-		'description': 'Clears the console',
+		'description': 'Clear the console',
 		'exec': _clear
 	}
 }
