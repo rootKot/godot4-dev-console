@@ -12,8 +12,9 @@ Give it a try and see how much smoother your development process can be!
 ## Features
 
 - Simple setup and usage
-- Toggle the console with the press of the ` key
+- Print anything in console using Console.print()
 - Navigate previous commands with ease using the arrow keys
+- Toggle the console with the press of the ` key
 - Define custom commands for your game (Currently in Development)
 
 ## Installation
