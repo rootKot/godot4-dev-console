@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://dmj78c4r6bd8"]
+
+[ext_resource type="Script" path="res://Scripts/Console.gd" id="1_k87r0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5tn8s"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0.470588)
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="Console" type="CanvasLayer"]
+layer = 128
+script = ExtResource("1_k87r0")
+
+[node name="Container" type="PanelContainer" parent="."]
+offset_right = 525.0
+offset_bottom = 295.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_5tn8s")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Container"]
+layout_mode = 2
+
+[node name="ConsoleRt" type="RichTextLabel" parent="Container/VBoxContainer"]
+custom_minimum_size = Vector2(400, 250)
+layout_mode = 2
+focus_mode = 2
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = " = Console =
+"
+scroll_following = true
+selection_enabled = true
+
+[node name="HSeparator" type="HSeparator" parent="Container/VBoxContainer"]
+layout_mode = 2
+
+[node name="Cmd" type="LineEdit" parent="Container/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
