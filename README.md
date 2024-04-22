@@ -12,9 +12,10 @@ Give it a try and see how much smoother your development process can be!
 ## Features
 
 - Simple setup and usage
-- Toggle the console with the press of the ` key
-- Navigate previous commands with ease using the arrow keys
+- Print anything in console using Console.print()
 - Define custom commands for your game
+- Navigate previous commands with ease using the arrow keys
+- Toggle the console with the press of the `~` key
 
 ## Installation
 
