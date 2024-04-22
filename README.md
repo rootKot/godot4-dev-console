@@ -1,4 +1,4 @@
-# Dev Console for Godot 4.x
+# Dev Console for Godot 4.2.x
 
 Hey there! Check out this handy in-game dev console I made for Godot. It's super easy to set up and perfect for debugging multiplayer games.
 
@@ -14,7 +14,7 @@ Give it a try and see how much smoother your development process can be!
 - Simple setup and usage
 - Toggle the console with the press of the ` key
 - Navigate previous commands with ease using the arrow keys
-- Define custom commands for your game (Currently in Development)
+- Define custom commands for your game
 
 ## Installation
 
@@ -37,8 +37,42 @@ From the inspector you can set is the console should be visible by default when 
   Console.print('This is my variable', my_variable)
   Console.print('I', 'can', 'pass', 'up', 'to', 12, 'params')
 ```
+
+## Add custom commands
+```gdscript
+	Console.add_command(
+		command_name: String,
+		function: Callable,
+		function_arguments_if_needed: Array[String],
+		description_to_show_in_help: String
+	)
+```
+### Examples
+```gdscript
+	Console.add_command(
+		'set_player_pos',
+		_set_player_pos,
+		['float', 'float'],
+		'Set player pos. Ex. set_player_pos 100 50'
+	)
+	func _set_player_pos(x: float, y: float):
+		position = Vector2(x, y)
+```
+```gdscript
+	Console.add_command(
+		'is_player_can_move',
+		func(val: bool): _is_player_can_move = val,
+		['bool'],
+		'set if player can move. Ex. is_player_can_move false'
+	)
+```
+### Remove command
+```gdscript
+	Console.remove_command('is_player_can_move')
+```
+
 ## Future plans
-* Let user to add custom commands
+* Implement Autocomplete functionality
 * Add checkbox to select if the console should be available in release build
 
 ## License

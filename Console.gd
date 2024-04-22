@@ -7,16 +7,7 @@ class_name Console
 static var consoleRt: RichTextLabel
 var cmd_input: LineEdit
 
-var _commands: Dictionary = {
-	'help': {
-		'description': 'Show all the commands',
-		'exec': _help
-	},
-	'clear': {
-		'description': 'Clear the console',
-		'exec': _clear
-	}
-}
+static var _commands: Dictionary
 
 var _command_history: Array[String] = []
 var _command_from_history_index = -1
@@ -26,6 +17,19 @@ func _ready():
 	cmd_input = get_node('Container/VBoxContainer/Cmd')
 	show() if is_console_visible else hide()
 	_create_toggle_key()
+	
+	_commands = {
+		'help': {
+			'description': 'Show all the commands',
+			'exec': _help,
+			'param_types': []
+		},
+		'clear': {
+			'description': 'Clear the console',
+			'exec': _clear,
+			'param_types': []
+		}
+	}
 
 func _create_toggle_key():
 	var input_event = InputEventKey.new()
@@ -35,16 +39,31 @@ func _create_toggle_key():
 
 func _process(delta):
 	if Input.is_action_just_pressed('toggle_console'):
-		hide() if visible else show()
-		cmd_input.set_text('')
-	
+		if visible:
+			hide()
+		else:
+			show()
+			cmd_input.set_text('')
+			cmd_input.grab_focus.call_deferred()
+			
+
 	if cmd_input.has_focus():
-		if Input.is_action_just_pressed('ui_accept'):
+		if Input.is_action_just_pressed('ui_text_completion_accept'):
 			_exec()
 		elif Input.is_action_just_pressed('ui_up'):
 			_get_command_from_history(1)
 		elif Input.is_action_just_pressed('ui_down'):
 			_get_command_from_history(-1)
+
+static func add_command(_name: String, exec: Callable, param_types: Array[String]=[], description: String = ''):
+	_commands[_name] = {
+		'description': description,
+		'exec': exec,
+		'param_types': param_types
+	}
+
+static func remove_command(_name: String):
+	_commands.erase(_name)
 
 static func print(
 	arg0 = null, arg1 = null, arg2 = null, arg3 = null,
@@ -57,19 +76,38 @@ static func print(
 		if arg == null:
 			break
 		_text += str(arg) + ' '
-	consoleRt.add_text(_text)
+	consoleRt.append_text(_text)
 
 func _exec():
-	var _text: String = cmd_input.get_text()
+	var command: String = cmd_input.get_text()
 	cmd_input.set_text('')
 	_command_from_history_index = -1
 	
-	if _text != '' and _commands.has(_text):
-		Console.print('>', _text)
-		_commands[_text].exec.call()
-		_command_history.push_front(_text)
-	elif _text != '':
-		Console.print('>', _text, 'command not found.')
+	var cmdArr: PackedStringArray = command.split(' ')
+	
+	if cmdArr.size() and _commands.has(cmdArr[0]):
+		var cmdParams = []
+		for param_i in range(1, cmdArr.size()):
+			# param is string by default
+			var param = cmdArr[param_i]
+			if _commands[cmdArr[0]].param_types.size() > 0:
+				match _commands[cmdArr[0]].param_types[param_i - 1]:
+					'int':
+						param = int(cmdArr[param_i])
+					'float':
+						param = float(cmdArr[param_i])
+					'bool':
+						param = true if ['1', 'true', 'TRUE', 'True'].has(cmdArr[param_i]) else false
+			cmdParams.append(param)
+		
+		Console.print('>', command)
+		(_commands[cmdArr[0]].exec as Callable).callv(cmdParams)
+		
+	elif cmdArr[0] != '':
+		Console.print('>', command, '[color=#d15d5d]', 'command not found.', '[/color]')
+		
+	if command != '' and (_command_history.size() == 0 or command != _command_history[0]):
+		_command_history.push_front(command)
 
 func _get_command_from_history(direction: int):
 	var history_size: int = _command_history.size()
@@ -84,7 +122,10 @@ func _get_command_from_history(direction: int):
 func _help():
 	Console.print('---------------------')
 	for command in _commands:
-		Console.print(command, '-', _commands[command].description)
+		var params = ''
+		for param: String in _commands[command].param_types as Array[String]:
+			params += '['+param+'] '
+		Console.print('[color=#62b769]', command, params, '[/color]', '-', _commands[command].description)
 	Console.print('---------------------')
 
 func _clear():
